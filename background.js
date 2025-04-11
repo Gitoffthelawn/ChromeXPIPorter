@@ -25,7 +25,7 @@ chrome.management.onUninstalled.addListener(ext => {
 
 async function getCWS(url){
     let id = url.replace(/.*?\/detail(\/.*?)?\/(.*?)(\/|#|\?|$).*/, "$2")
-    let crx = await fetch(`https://clients2.google.com/service/update2/crx?response=redirect&prodversion=49.0&acceptformat=crx3&x=id%3D${id}%26installsource%3Dondemand%26uc`).then(r => r.arrayBuffer())
+    let crx = await fetch(`https://clients2.google.com/service/update2/crx?response=redirect&prodversion=103.0.1264.77&acceptformat=crx3&x=id%3D${id}%26installsource%3Dondemand%26uc`).then(r => r.arrayBuffer())
     return await patchExt(crx, id, "CWS")
 }
 
