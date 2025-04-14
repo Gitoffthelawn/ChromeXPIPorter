@@ -25,8 +25,12 @@ chrome.management.onUninstalled.addListener(ext => {
 
 async function getCWS(url){
     let id = url.replace(/.*?\/detail(\/.*?)?\/(.*?)(\/|#|\?|$).*/, "$2")
-    let crx = await fetch(`https://clients2.google.com/service/update2/crx?response=redirect&prodversion=103.0.1264.77&acceptformat=crx3&x=id%3D${id}%26installsource%3Dondemand%26uc`).then(r => r.arrayBuffer())
-    return await patchExt(crx, id, "CWS")
+    try {
+        return await getAMOAlt(id)
+    } catch {
+        let crx = await fetch(`https://clients2.google.com/service/update2/crx?response=redirect&prodversion=103.0.1264.77&acceptformat=crx3&x=id%3D${id}%26installsource%3Dondemand%26uc`).then(r => r.arrayBuffer())
+        return await patchExt(crx, id, "CWS")
+    }
 }
 
 async function isInstalledCWS(url){
@@ -38,4 +42,11 @@ async function isInstalledCWS(url){
 function uninstallCWS(url){
     let id = url.replace(/.*?\/detail(\/.*?)?\/(.*?)(\/|#|\?|$).*/, "$2")
     chrome.runtime.sendMessage(`${id}@CWS_XPIPorter`, {type:"XPIPorterUninstall"})
+}
+
+async function getAMOAlt(cwsId){
+    let maps = await fetch("https://services.addons.mozilla.org/api/v5/addons/browser-mappings/?browser=chrome").then(j => j.json())
+    let firefoxId = maps.results.find(item => item.extension_id == cwsId).addon_guid
+    let apiResponse = await fetch(`https://addons.mozilla.org/api/v5/addons/addon/${firefoxId}/`).then(r => r.json())
+    return await fetch(apiResponse['current_version']['file']['url']).then(r => r.arrayBuffer())
 }
