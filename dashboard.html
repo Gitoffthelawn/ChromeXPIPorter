@@ -1,17 +1,94 @@
-<html>
-    <body>
-        <h1>Installed:</h1>
-        <table>
-            <thead>
-                <th>Name</th>
-                <th>Current version</th>
-                <th>Latest version</th>
-                <th>Source</th>
-            </thead>
-            <tbody id="installed" style="text-align: center;"></tbody>
-        </table>
-        <h1>Install manually from file:</h1>
-        <input id="file" type="file">
-        <script type="module" src="./dashboard.js"></script>
-    </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRX Installer Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CRX Installer</h1>
+            <p>Manage installed extensions</p>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <h2>Installed Extensions</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Current Version</th>
+                                <th>Latest Version</th>
+                                <th>Source</th>
+                            </tr>
+                        </thead>
+                        <tbody id="installed">
+                            <!-- Extensions will be populated here by JavaScript -->
+                        </tbody>
+                    </table>
+                    <div id="empty-state" class="empty-state" style="display: none;">
+                        <div class="empty-state-icon">📦</div>
+                        <h3>No Extensions Found</h3>
+                        <p>Install some extensions to get started with CRX Installer</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="file-upload-section">
+                    <h3>Install Manually from File</h3>
+                    <p>Select a compatible extension file to install</p>
+                    <div class="file-input-wrapper">
+                        <input id="file" type="file" class="file-input" accept=".crx,.xpi,.zip">
+                        <label for="file" class="file-input-button">
+                            Choose File
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Documentation & Help</h2>
+                <div class="docs-container">
+                    <div class="doc-card">
+                        <div class="doc-icon">📚</div>
+                        <div class="doc-content">
+                            <h3>Getting Started</h3>
+                            <p>Learn how to set up and use CRX Installer</p>
+                            <a href="docs/GettingStarted.html" class="doc-link" target="_blank">
+                                Read Guide →
+                            </a>
+                        </div>
+                    </div>
+                    <div class="doc-card">
+                        <div class="doc-icon">🔧</div>
+                        <div class="doc-content">
+                            <h3>Regular Firefox Guide</h3>
+                            <p>Make it work with non-Nightly builds of Firefox</p>
+                            <a href="docs/RegularFirefox.html" class="doc-link" target="_blank">
+                                Firefox Setup →
+                            </a>
+                        </div>
+                    </div>
+                    <div class="doc-card">
+                        <div class="doc-icon">📱</div>
+                        <div class="doc-content">
+                            <h3>Android Guide</h3>
+                            <p>Make it work with Android FF</p>
+                            <a href="docs/Android.html" class="doc-link" target="_blank">
+                                Android Guide →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="./dashboard.js"></script>
+</body>
 </html>
