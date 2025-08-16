@@ -12,13 +12,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 })
 
 chrome.management.onInstalled.addListener(ext => {
-    if(ext.id.endsWith("XPIPorter")){
+    if(ext.id.endsWith("_CRXInstaller")){
         chrome.tabs.reload()
     }
 })
 
 chrome.management.onUninstalled.addListener(ext => {
-    if(ext.id.endsWith("XPIPorter")){
+    if(ext.id.endsWith("_CRXInstaller")){
         chrome.tabs.reload()
     }
 })
@@ -36,12 +36,12 @@ async function getCWS(url){
 async function isInstalledCWS(url){
     let id = url.replace(/.*?\/detail(\/.*?)?\/(.*?)(\/|#|\?|$).*/, "$2")
     let allExtensions = await chrome.management.getAll()
-    return Boolean(allExtensions.find(ext => ext.id == `${id}@CWS_XPIPorter`))
+    return Boolean(allExtensions.find(ext => ext.id == `${id}@CWS_CRXInstaller`))
 }
 
 function uninstallCWS(url){
     let id = url.replace(/.*?\/detail(\/.*?)?\/(.*?)(\/|#|\?|$).*/, "$2")
-    chrome.runtime.sendMessage(`${id}@CWS_XPIPorter`, {type:"XPIPorterUninstall"})
+    chrome.runtime.sendMessage(`${id}@CWS_CRXInstaller`, {type:"XPIPorterUninstall"})
 }
 
 async function getAMOAlt(cwsId){

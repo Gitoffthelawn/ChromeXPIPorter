@@ -7,7 +7,7 @@ function loadExtension(file){
 async function patchManifest(ext, extId, store){
     let manifest = await ext.file('manifest.json').async('text').then(txt => JSON.parse(txt))
     let randomId = (Math.random() + 1).toString(36).substring(2)
-    let newExtId = `${extId || randomId}@${store || ""}_XPIPorter`
+    let newExtId = `${extId || randomId}@${store || ""}_CRXInstaller`
 
     if(!manifest.background){
         manifest.background = {

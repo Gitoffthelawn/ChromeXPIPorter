@@ -6,7 +6,7 @@ document.getElementById("file").addEventListener("change", async () => {
     installResult(patchedExt)
 })
 
-let installedAddons = await chrome.management.getAll().then(ext => ext.filter(ext => ext.id.endsWith("_XPIPorter")))
+let installedAddons = await chrome.management.getAll().then(ext => ext.filter(ext => ext.id.endsWith("_CRXInstaller")))
 for(let ext of installedAddons) {
     let source = ext.id.match(/(?<=@).*?(?=_)/)[0]
     document.getElementById("installed").insertAdjacentHTML("beforeend", `
