@@ -34,7 +34,7 @@ function installResult(ab){
 async function queryLatest(source, extId){
     if(source == "CWS"){
         let id = extId.match(/.*?(?=@)/)
-        let apiRes = await fetch(`https://clients2.google.com/service/update2/crx?prodversion=49.0&acceptformat=crx3&x=id%3D${id}%26installsource%3Dondemand%26uc`).then(res => res.text())
+        let apiRes = await fetch(`https://clients2.google.com/service/update2/crx?prodversion=140&acceptformat=crx3&x=id%3D${id}%26installsource%3Dondemand%26uc`).then(res => res.text())
         return new DOMParser().parseFromString(apiRes,"text/xml").querySelector("updatecheck").getAttribute("version")
     }
     return undefined
