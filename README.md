@@ -12,8 +12,8 @@
 > Always act prudently and at your own risk.
 
 > [!IMPORTANT]
-> This extension does not work in the regular version of Firefox.
-> Make sure to use following browsers.
+> I recommend using this extension with the following supported browsers.
+> It will work with the regular version of Firefox, but additional steps are required.
 
 # Tested browsers
 * Floorp (Recommended)
