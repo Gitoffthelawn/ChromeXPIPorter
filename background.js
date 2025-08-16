@@ -23,6 +23,13 @@ chrome.management.onUninstalled.addListener(ext => {
     }
 })
 
+chrome.runtime.onInstalled.addListener((details) => {
+    if (details.reason === "install") {
+        chrome.tabs.create({ url: "docs/GettingStarted.html" });
+    }
+});
+
+
 async function getCWS(url){
     let id = url.replace(/.*?\/detail(\/.*?)?\/(.*?)(\/|#|\?|$).*/, "$2")
     try {
