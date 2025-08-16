@@ -8,13 +8,15 @@ document.getElementById("file").addEventListener("change", async () => {
 
 let installedAddons = await chrome.management.getAll().then(ext => ext.filter(ext => ext.id.endsWith("_CRXInstaller")))
 for(let ext of installedAddons) {
+    const escapeStr = t => new Option(t).innerHTML
+
     let source = ext.id.match(/(?<=@).*?(?=_)/)[0]
     document.getElementById("installed").insertAdjacentHTML("beforeend", `
         <tr>
-            <td>${ext.name}</td>
-            <td>${ext.version}</td>
-            <td>${await queryLatest(source, ext.id)}</td>
-            <td>${source}</td>
+            <td>${escapeStr(ext.name)}</td>
+            <td>${escapeStr(ext.version)}</td>
+            <td>${escapeStr(await queryLatest(source, ext.id))}</td>
+            <td>${escapeStr(source)}</td>
         </tr>
     `)
 }
