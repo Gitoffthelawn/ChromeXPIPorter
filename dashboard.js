@@ -11,15 +11,34 @@ for(let ext of installedAddons) {
     const escapeStr = t => new Option(t).innerHTML
 
     let source = ext.id.match(/(?<=@).*?(?=_)/)[0]
+    let latestVersion = await queryLatest(source, ext.id)
+    let needsUpdate = latestVersion && latestVersion !== ext.version
+    
     document.getElementById("installed").insertAdjacentHTML("beforeend", `
         <tr>
             <td>${escapeStr(ext.name)}</td>
             <td>${escapeStr(ext.version)}</td>
-            <td>${escapeStr(await queryLatest(source, ext.id))}</td>
+            <td>${escapeStr(latestVersion || 'Unknown')}</td>
             <td>${escapeStr(source)}</td>
+            <td>
+                ${needsUpdate ? 
+                    `<button class="update-btn" data-ext-id="${ext.id}" data-source="${source}">
+                        Update to ${latestVersion}
+                    </button>` : 
+                    '<span class="up-to-date">Up to date</span>'
+                }
+            </td>
         </tr>
     `)
 }
+
+document.addEventListener('click', event => {
+    if (event.target.classList.contains('update-btn')) {
+        const extId = event.target.dataset.extId
+        const source = event.target.dataset.source
+        updateExtension(extId, source)
+    }
+})
 
 function installResult(ab){
     let blobLink = URL.createObjectURL(new Blob([ab], {type: "application/x-xpinstall"}))
@@ -40,4 +59,13 @@ async function queryLatest(source, extId){
         return new DOMParser().parseFromString(apiRes,"text/xml").querySelector("updatecheck").getAttribute("version")
     }
     return undefined
+}
+
+async function updateExtension(extId, source) {
+    let id = extId.split("@")[0]
+    if(source == "CWS"){
+        let crx = await fetch(`https://clients2.google.com/service/update2/crx?response=redirect&prodversion=140&acceptformat=crx3&x=id%3D${id}%26installsource%3Dondemand%26uc`).then(r => r.arrayBuffer())
+        let xpi =await patchExt(crx, id, source)
+        installResult(xpi)
+    }
 }

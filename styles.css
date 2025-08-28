@@ -288,6 +288,31 @@ tbody td {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
+.update-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.update-btn:hover {
+    background-color: #45a049;
+}
+
+.update-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.up-to-date {
+    color: #666;
+    font-style: italic;
+}
+
 @media (max-width: 768px) {
     .container {
         margin: 10px;
