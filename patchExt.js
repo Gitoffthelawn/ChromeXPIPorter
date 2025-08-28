@@ -9,16 +9,22 @@ async function patchManifest(ext, extId, store){
     let randomId = (Math.random() + 1).toString(36).substring(2)
     let newExtId = `${extId || randomId}@${store || ""}_CRXInstaller`
 
-    if(!manifest.background){
-        manifest.background = {
-            scripts: []
+    if(!manifest.theme) {
+        if(!manifest.background){
+            manifest.background = {
+                scripts: []
+            }
         }
+        if(manifest.background?.service_worker){
+            manifest.background.scripts = [manifest.background.service_worker]
+            delete manifest.background.service_worker
+        }
+        manifest.background.scripts.push("uninstallHandler.js")
     }
-    if(manifest.background?.service_worker){
-        manifest.background.scripts = [manifest.background.service_worker]
-        delete manifest.background.service_worker
+
+    if(manifest.update_url) {
+        delete manifest.update_url
     }
-    manifest.background.scripts.push("uninstallHandler.js")
 
     manifest.browser_specific_settings = {
         "gecko": {
