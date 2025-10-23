@@ -69,16 +69,31 @@ async function patchManifest(ext, extId, store, needsOffscreenPolyfill = false){
             }
         }
         if(manifest.background?.service_worker){
-            // Process service worker and handle importScripts
-            let serviceWorkerScript = await ext.file(manifest.background.service_worker).async('text')
-            let { processedScript, importedScripts } = await processServiceWorker(ext, serviceWorkerScript, manifest.background.service_worker)
-            
-            // Update the service worker file with processed content
-            ext.file(manifest.background.service_worker, processedScript)
-            
-            // Add imported scripts first, then the service worker script
-            // This ensures imported scripts are loaded before the service worker that calls them
-            manifest.background.scripts = [...importedScripts, manifest.background.service_worker]
+            manifest.background.service_worker = manifest.background.service_worker.replace(/^\/+/, "")
+            // Check if service worker file exists
+            let serviceWorkerFile = ext.file(manifest.background.service_worker)
+            if (serviceWorkerFile) {
+                try {
+                    // Process service worker and handle importScripts
+                    let serviceWorkerScript = await serviceWorkerFile.async('text')
+                    let { processedScript, importedScripts } = await processServiceWorker(ext, serviceWorkerScript, manifest.background.service_worker)
+                    
+                    // Update the service worker file with processed content
+                    ext.file(manifest.background.service_worker, processedScript)
+                    
+                    // Add imported scripts first, then the service worker script
+                    // This ensures imported scripts are loaded before the service worker that calls them
+                    manifest.background.scripts = [...importedScripts, manifest.background.service_worker]
+                } catch (error) {
+                    console.warn('Failed to process service worker:', manifest.background.service_worker, error)
+                    // Fallback: just convert service_worker to scripts without processing
+                    manifest.background.scripts = [manifest.background.service_worker]
+                }
+            } else {
+                console.warn('Service worker file not found:', manifest.background.service_worker)
+                // Fallback: just convert service_worker to scripts without processing
+                manifest.background.scripts = [manifest.background.service_worker]
+            }
             delete manifest.background.service_worker
         }
         
@@ -113,9 +128,12 @@ async function patchManifest(ext, extId, store, needsOffscreenPolyfill = false){
 async function checkOffscreenUsage(ext) {
     // Check manifest.json for offscreen permissions
     try {
-        let manifest = await ext.file('manifest.json').async('text').then(txt => JSON.parse(txt))
-        if (manifest.permissions && manifest.permissions.includes('offscreen')) {
-            return true
+        let manifestFile = ext.file('manifest.json')
+        if (manifestFile) {
+            let manifest = await manifestFile.async('text').then(txt => JSON.parse(txt))
+            if (manifest.permissions && manifest.permissions.includes('offscreen')) {
+                return true
+            }
         }
     } catch (e) {
         // Ignore manifest parsing errors
@@ -126,9 +144,12 @@ async function checkOffscreenUsage(ext) {
     for (let filename of files) {
         if (filename.endsWith('.js') || filename.endsWith('.mjs')) {
             try {
-                let content = await ext.file(filename).async('text')
-                if (content.includes('chrome.offscreen') || content.includes('offscreen')) {
-                    return true
+                let file = ext.file(filename)
+                if (file) {
+                    let content = await file.async('text')
+                    if (content.includes('chrome.offscreen') || content.includes('offscreen')) {
+                        return true
+                    }
                 }
             } catch (e) {
                 // Ignore file reading errors
