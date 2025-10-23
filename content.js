@@ -23,8 +23,20 @@ async function installFromCWS(container){
     hideSpinner(container)
 }
 
+function hideChromeAds() {
+    const style = document.createElement('style')
+    style.textContent = `
+        div.xX710b.XtdnDc,
+        div[aria-labelledby=promo-header] {
+            display: none !important;
+        }
+    `
+    document.head.appendChild(style)
+}
+
 async function main(container, target){
     container.XPIPorter = true
+    hideChromeAds()
     let isInstalled  = await chrome.runtime.sendMessage({type:"isInstalledCWS"})
     target.disabled = false
     if(!isInstalled){
