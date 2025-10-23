@@ -11,15 +11,23 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true
 })
 
-chrome.management.onInstalled.addListener(ext => {
+chrome.management.onInstalled.addListener(async ext => {
     if(ext.id.endsWith("_CRXInstaller")){
-        chrome.tabs.reload()
+        let tabs = await chrome.tabs.query({active: true, currentWindow: true});
+        let currentTab = tabs[0];
+        if(currentTab.url.includes("chromewebstore.google.com")) {
+            chrome.tabs.reload();
+        }
     }
 })
 
-chrome.management.onUninstalled.addListener(ext => {
+chrome.management.onUninstalled.addListener(async ext => {
     if(ext.id.endsWith("_CRXInstaller")){
-        chrome.tabs.reload()
+        let tabs = await chrome.tabs.query({active: true, currentWindow: true});
+        let currentTab = tabs[0];
+        if(currentTab.url.includes("chromewebstore.google.com")) {
+            chrome.tabs.reload();
+        }
     }
 })
 
