@@ -313,6 +313,36 @@ tbody td {
     font-style: italic;
 }
 
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.uninstall-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.uninstall-btn:hover {
+    background-color: #d32f2f;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+}
+
+.uninstall-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(244, 67, 54, 0.3);
+}
+
 @media (max-width: 768px) {
     .container {
         margin: 10px;

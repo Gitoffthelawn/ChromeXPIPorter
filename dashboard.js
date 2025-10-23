@@ -21,12 +21,17 @@ for(let ext of installedAddons) {
             <td>${escapeStr(latestVersion || 'Unknown')}</td>
             <td>${escapeStr(source)}</td>
             <td>
-                ${needsUpdate ? 
-                    `<button class="update-btn" data-ext-id="${ext.id}" data-source="${source}">
-                        Update to ${latestVersion}
-                    </button>` : 
-                    '<span class="up-to-date">Up to date</span>'
-                }
+                <div class="action-buttons">
+                    ${needsUpdate ? 
+                        `<button class="update-btn" data-ext-id="${ext.id}" data-source="${source}">
+                            Update to ${latestVersion}
+                        </button>` : 
+                        '<span class="up-to-date">Up to date</span>'
+                    }
+                    <button class="uninstall-btn" data-ext-id="${ext.id}">
+                        Uninstall
+                    </button>
+                </div>
             </td>
         </tr>
     `)
@@ -37,6 +42,9 @@ document.addEventListener('click', event => {
         const extId = event.target.dataset.extId
         const source = event.target.dataset.source
         updateExtension(extId, source)
+    } else if (event.target.classList.contains('uninstall-btn')) {
+        const extId = event.target.dataset.extId
+        uninstallExtension(extId)
     }
 })
 
@@ -68,4 +76,8 @@ async function updateExtension(extId, source) {
         let xpi =await patchExt(crx, id, source)
         installResult(xpi)
     }
+}
+
+async function uninstallExtension(extId) {
+    chrome.runtime.sendMessage(extId, {type:"XPIPorterUninstall"})
 }
