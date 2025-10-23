@@ -57,7 +57,7 @@ async function processServiceWorker(ext, serviceWorkerScript, serviceWorkerPath)
     return { processedScript, importedScripts }
 }
 
-async function patchManifest(ext, extId, store){
+async function patchManifest(ext, extId, store, needsOffscreenPolyfill = false){
     let manifest = await ext.file('manifest.json').async('text').then(txt => JSON.parse(txt))
     let randomId = (Math.random() + 1).toString(36).substring(2)
     let newExtId = `${extId || randomId}@${store || ""}_CRXInstaller`
@@ -81,6 +81,12 @@ async function patchManifest(ext, extId, store){
             manifest.background.scripts = [...importedScripts, manifest.background.service_worker]
             delete manifest.background.service_worker
         }
+        
+        // Add offscreen polyfill if needed (at the beginning)
+        if (needsOffscreenPolyfill) {
+            manifest.background.scripts.unshift("offscreenPolyfill.js")
+        }
+        
         manifest.background.scripts.push("uninstallHandler.js")
     }
 
@@ -104,16 +110,56 @@ async function patchManifest(ext, extId, store){
     return ext
 }
 
-async function injectScripts(ext){
+async function checkOffscreenUsage(ext) {
+    // Check manifest.json for offscreen permissions
+    try {
+        let manifest = await ext.file('manifest.json').async('text').then(txt => JSON.parse(txt))
+        if (manifest.permissions && manifest.permissions.includes('offscreen')) {
+            return true
+        }
+    } catch (e) {
+        // Ignore manifest parsing errors
+    }
+    
+    // Check all JavaScript files for chrome.offscreen usage
+    let files = Object.keys(ext.files)
+    for (let filename of files) {
+        if (filename.endsWith('.js') || filename.endsWith('.mjs')) {
+            try {
+                let content = await ext.file(filename).async('text')
+                if (content.includes('chrome.offscreen') || content.includes('offscreen')) {
+                    return true
+                }
+            } catch (e) {
+                // Ignore file reading errors
+            }
+        }
+    }
+    
+    return false
+}
+
+async function injectScripts(ext, needsOffscreenPolyfill = false){
     let uninstallHandler = await fetch("/injects/uninstallHandler.js").then(res => res.arrayBuffer())
     ext.file("uninstallHandler.js", uninstallHandler)
+    
+    // Inject offscreen polyfill if needed
+    if (needsOffscreenPolyfill) {
+        let offscreenPolyfill = await fetch("/injects/offscreenPolyfill.js").then(res => res.arrayBuffer())
+        ext.file("offscreenPolyfill.js", offscreenPolyfill)
+    }
+    
     return ext
 }
 
 export async function patchExt(file, extId, store){
     let ext = await loadExtension(file)
-    ext = await injectScripts(ext)
-    ext =  await patchManifest(ext, extId, store)
+    
+    // Check if offscreen polyfill is needed
+    let needsOffscreenPolyfill = await checkOffscreenUsage(ext)
+    
+    ext = await injectScripts(ext, needsOffscreenPolyfill)
+    ext =  await patchManifest(ext, extId, store, needsOffscreenPolyfill)
     return await ext.generateAsync({type: "arraybuffer"})
 }
 
