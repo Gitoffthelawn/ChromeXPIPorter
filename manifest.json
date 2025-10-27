@@ -19,7 +19,7 @@
           "matches": ["*://chromewebstore.google.com/*"]
         }
     ],
-    "permissions": ["management", "tabs"],
+    "permissions": ["management", "tabs", "contextualIdentities"],
     "host_permissions": ["*://clients2.google.com/*", "*://clients2.googleusercontent.com/*"],
     "browser_specific_settings": {
         "gecko": {

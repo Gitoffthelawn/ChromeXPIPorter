@@ -8,6 +8,7 @@ function hideSpinner(container){
 }
 
 async function installFromCWS(container){
+    await checkIfMainContainer()
     showSpinner(container)
     let xpi = await chrome.runtime.sendMessage({type:"getCWS"})
     let blobLink = URL.createObjectURL(new Blob([xpi], {type: "application/x-xpinstall"}))
@@ -32,6 +33,13 @@ function hideChromeAds() {
         }
     `
     document.head.appendChild(style)
+}
+
+async function checkIfMainContainer(){
+    let isMainContainer = await chrome.runtime.sendMessage({type:"checkContainer"})
+    if(!isMainContainer){
+        alert("Installation may fails within the container.\nPlease open without container!")
+    }
 }
 
 async function main(container, target){

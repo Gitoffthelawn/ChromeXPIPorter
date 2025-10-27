@@ -8,6 +8,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     request.type == "getCWS" && getCWS(sender.tab.url).then(xpi => sendResponse(xpi))
     request.type == "isInstalledCWS" && isInstalledCWS(sender.tab.url).then(bool => sendResponse(bool))
     request.type == "uninstall" && uninstallCWS(sender.tab.url)
+    request.type == "checkContainer" && checkIfMainContainer(sender.tab.id).then(bool => sendResponse(bool))
     return true
 })
 
@@ -64,4 +65,18 @@ async function getAMOAlt(cwsId){
     let firefoxId = maps.results.find(item => item.extension_id == cwsId).addon_guid
     let apiResponse = await fetch(`https://addons.mozilla.org/api/v5/addons/addon/${firefoxId}/`).then(r => r.json())
     return await fetch(apiResponse['current_version']['file']['url']).then(r => r.arrayBuffer())
+}
+
+async function checkIfMainContainer(tabId) {
+    try {
+        const tab = await chrome.tabs.get(tabId);
+        
+        // Check if tab has a container (cookieStoreId exists and is not default)
+        if (tab.cookieStoreId && tab.cookieStoreId !== 'firefox-default') {
+            return false
+        }
+    } catch (error) {
+        console.error('Error checking container:', error);
+    }
+    return true
 }
