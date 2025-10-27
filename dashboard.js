@@ -26,7 +26,9 @@ for(let ext of installedAddons) {
                         `<button class="update-btn" data-ext-id="${ext.id}" data-source="${source}">
                             Update to ${latestVersion}
                         </button>` : 
-                        '<span class="up-to-date">Up to date</span>'
+                        `<button class="update-btn" data-ext-id="${ext.id}" data-source="${source}">
+                            Reinstall ${latestVersion ? latestVersion : ext.version}
+                        </button>`
                     }
                     <button class="uninstall-btn" data-ext-id="${ext.id}">
                         Uninstall
