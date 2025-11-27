@@ -12,7 +12,24 @@ async function installFromCWS(container){
     showSpinner(container)
     let xpi = await chrome.runtime.sendMessage({type:"getCWS"})
     let blobLink = URL.createObjectURL(new Blob([xpi], {type: "application/x-xpinstall"}))
-    location.href = blobLink
+    
+    // Check if "Download without installing directly" is enabled
+    const settings = await chrome.storage.local.get(['downloadWithoutInstalling'])
+    const downloadDirectly = settings.downloadWithoutInstalling || false
+    
+    if (downloadDirectly) {
+        // Download directly without showing installation popup
+        const downloadLink = document.createElement("a")
+        downloadLink.download = "extension.xpi"
+        downloadLink.href = blobLink
+        downloadLink.style.display = "none"
+        document.body.appendChild(downloadLink)
+        downloadLink.click()
+        document.body.removeChild(downloadLink)
+    } else {
+        // Show installation popup (default behavior)
+        location.href = blobLink
+    }
 
     let debugElm = document.createElement("a")
     debugElm.download = "debug.xpi"

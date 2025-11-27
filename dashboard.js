@@ -1,5 +1,27 @@
 import {patchExt} from  "/patchExt.js"
 
+// Load and save settings
+async function loadSettings() {
+    const result = await chrome.storage.local.get(['downloadWithoutInstalling'])
+    const checkbox = document.getElementById('downloadWithoutInstalling')
+    if (checkbox) {
+        checkbox.checked = result.downloadWithoutInstalling || false
+    }
+}
+
+async function saveSettings() {
+    const checkbox = document.getElementById('downloadWithoutInstalling')
+    if (checkbox) {
+        await chrome.storage.local.set({ downloadWithoutInstalling: checkbox.checked })
+    }
+}
+
+// Initialize settings
+loadSettings()
+
+// Save settings when checkbox changes
+document.getElementById('downloadWithoutInstalling')?.addEventListener('change', saveSettings)
+
 document.getElementById("file").addEventListener("change", async () => {
     let patchedExt = await patchExt(file.files[0], null, "Manual")
 
