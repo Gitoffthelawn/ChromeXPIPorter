@@ -1,0 +1,37 @@
+{
+    "page_size": 100,
+    "page_count": 1,
+    "count": 0,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "addon_guid": "firefox@audd.tech",
+            "extension_id": "lhhohkfofnfbnildpdhhjeeenapeceei"
+        },
+        {
+            "addon_guid": "Librezam@Librezam",
+            "extension_id": "mmioliijnhnoblpgimnlajmefafdfilb"
+        },
+        {
+            "addon_guid": "Librezam@Librezam",
+            "extension_id": "dpacanjfikmhoddligfbehkpomnbgblf"
+        },
+        {
+            "addon_guid": "LINEPorted@FoxRefire",
+            "extension_id": "ophjlpahpchlmihnnnihgmmeilfjmjjc"
+        },
+        {
+            "addon_guid": "browser-extension@anonaddy",
+            "extension_id": "iadbdpnoknmbdeolbapdackdcogdmjpe"
+        },
+        {
+            "addon_guid": "{2e5ff8c8-32fe-46d0-9fc8-6b8986621f3c}",
+            "extension_id": "cnojnbdhbhnkbcieeekonklommdnndci"
+        },
+        {
+            "addon_guid": "{7a7a4a92-a2a0-41d1-9fd7-1e92480d612d}",
+            "extension_id": "clngdbkpkpeebahjckkjfobafhncgmne"
+        }
+    ]
+  }

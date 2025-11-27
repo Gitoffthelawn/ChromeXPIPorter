@@ -61,8 +61,29 @@ function uninstallCWS(url){
 }
 
 async function getAMOAlt(cwsId){
-    let maps = await fetch("https://services.addons.mozilla.org/api/v5/addons/browser-mappings/?browser=chrome").then(j => j.json())
-    let firefoxId = maps.results.find(item => item.extension_id == cwsId).addon_guid
+    let firefoxId = null
+    
+    // First, try to find in internalMappings.json
+    try {
+        let internalMaps = await fetch("/internalMappings.json").then(j => j.json())
+        let internalMatch = internalMaps.results.find(item => item.extension_id == cwsId)
+        if (internalMatch) {
+            firefoxId = internalMatch.addon_guid
+        }
+    } catch (error) {
+        console.warn("Failed to load internalMappings.json:", error)
+    }
+    
+    // If not found in internal mappings, try Mozilla API
+    if (!firefoxId) {
+        let maps = await fetch("https://services.addons.mozilla.org/api/v5/addons/browser-mappings/?browser=chrome").then(j => j.json())
+        let mozillaMatch = maps.results.find(item => item.extension_id == cwsId)
+        if (!mozillaMatch) {
+            throw new Error(`No Firefox alternative found for Chrome extension ID: ${cwsId}`)
+        }
+        firefoxId = mozillaMatch.addon_guid
+    }
+    
     let apiResponse = await fetch(`https://addons.mozilla.org/api/v5/addons/addon/${firefoxId}/`).then(r => r.json())
     return await fetch(apiResponse['current_version']['file']['url']).then(r => r.arrayBuffer())
 }
