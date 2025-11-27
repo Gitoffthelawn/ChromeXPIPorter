@@ -118,6 +118,9 @@ async function patchManifest(ext, extId, store, needsOffscreenPolyfill = false){
     if(manifest.web_accessible_resources){
         manifest.web_accessible_resources.forEach(res => {
             if(res.extension_ids) res.extension_ids = [newExtId]
+            if(res.matches) {
+                res.matches = res.matches.filter(match => !match.startsWith('chrome-extension://'))
+            }
         })
     }
 
